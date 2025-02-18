@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 const int BTN_PIN_R = 28;
-
+volatile bool estado = false;
 
 void btn_callback(uint gpio, uint32_t events) {
   if (events == 0x4) { // fall edge
@@ -15,7 +15,7 @@ void btn_callback(uint gpio, uint32_t events) {
 
 int main() {
   stdio_init_all();
-  bool estado = false;
+
 
   gpio_init(BTN_PIN_R);
   gpio_set_dir(BTN_PIN_R, GPIO_IN);
