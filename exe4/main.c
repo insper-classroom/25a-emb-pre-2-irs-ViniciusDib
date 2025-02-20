@@ -10,13 +10,13 @@ const int LED_PIN_G = 6;
 volatile bool estador = false;  
 volatile bool estadog = false;  
 
-void btn_callback(uint gpio, uint32_t events) {
+void btn_callback(uint gpio, unt32_t events) {
     sleep_ms(50);  
 
-    if (gpio == BTN_PIN_R && (events & GPIO_IRQ_EDGE_FALL)) {  
+    if (events = 0x4) {  
             estador = !estador;  
     } 
-    else if (gpio == BTN_PIN_R && (events & GPIO_IRQ_EDGE_RISE)) {  
+    else if (events = 0x8) {  
             estadog = !estadog;  
     }
 }
