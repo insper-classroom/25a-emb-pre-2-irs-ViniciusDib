@@ -7,17 +7,15 @@ const int LED_PIN_R = 4;
 const int BTN_PIN_G = 26;
 const int LED_PIN_G = 6;
 
-volatile int estador = 0;  
-volatile int estadog = 0;  
-//f
+volatile bool estador = false;  
+volatile bool estadog = false;  
 
-void btn_callback(uint gpio, unt32_t events) {
-    sleep_ms(50);  
+void btn_callback(uint gpio, uint32_t events) {
 
-    if (events = 0x4) {  
+    if (gpio == BTN_PIN_R && (events & GPIO_IRQ_EDGE_FALL)) {  
             estador = !estador;  
     } 
-    else if (events = 0x8) {  
+    if (gpio == BTN_PIN_G && (events & GPIO_IRQ_EDGE_RISE)) {  
             estadog = !estadog;  
     }
 }
