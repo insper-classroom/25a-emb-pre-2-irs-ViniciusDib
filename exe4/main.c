@@ -17,14 +17,8 @@ void btn_callback(uint gpio, unt32_t events) {
     if (events = 0x4) {  
             estador = !estador;  
     } 
-<<<<<<< HEAD
     else if (events = 0x8) {  
             estadog = !estadog;  
-=======
-    else if (gpio == BTN_PIN_G && (events & GPIO_IRQ_EDGE_RISE)) {  
-            estadog = !estadog;
-                       
->>>>>>> f0fdb5f7a7c1e5e96ff3307771248ae65839b7c2
     }
 }
 
