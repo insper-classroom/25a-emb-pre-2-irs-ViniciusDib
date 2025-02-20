@@ -8,19 +8,16 @@ const int BTN_PIN_G = 26;
 const int LED_PIN_G = 6;
 
 volatile bool estador = false;  
-volatile bool btn_r = false;  
+volatile bool estadog = false;  
 
 void btn_callback(uint gpio, uint32_t events) {
     sleep_ms(50);  
 
     if (gpio == BTN_PIN_R && (events & GPIO_IRQ_EDGE_FALL)) {  
-        if (!btn_r) {  
-            btn_r = true;
             estador = !estador;  
-        }
     } 
     else if (gpio == BTN_PIN_R && (events & GPIO_IRQ_EDGE_RISE)) {  
-        btn_r = false;  
+            estadog = !estadog;  
     }
 }
 
@@ -44,13 +41,14 @@ int main() {
     gpio_pull_up(BTN_PIN_G);
 
  
-    gpio_set_irq_enabled_with_callback(BTN_PIN_R, GPIO_IRQ_EDGE_FALL | GPIO_IRQ_EDGE_RISE, true, &btn_callback);
+    gpio_set_irq_enabled_with_callback(BTN_PIN_R, GPIO_IRQ_EDGE_FALL , true, &btn_callback);
+    gpio_set_irq_enabled_with_callback(BTN_PIN_G, GPIO_IRQ_EDGE_RISE, true, &btn_callback);
 
     while (true) {
 
         gpio_put(LED_PIN_R, estador);
 
-        gpio_put(LED_PIN_G, gpio_get(BTN_PIN_G) == 0 ? 1 : 0);
+        gpio_put(LED_PIN_G, estadog);
 
         sleep_ms(10); 
     }
