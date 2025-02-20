@@ -2,75 +2,56 @@
 #include "pico/stdlib.h"
 #include <stdio.h>
 
-
 const int BTN_PIN_R = 28;
 const int LED_PIN_R = 4;
-
 const int BTN_PIN_G = 26;
 const int LED_PIN_G = 6;
 
-volatile bool estador = false;
-volatile bool estadog = false;
-
+volatile bool estador = false;  
+volatile bool btn_r = false;  
 
 void btn_callback(uint gpio, uint32_t events) {
-  if (events == GPIO_IRQ_EDGE_FALL) { 
-    if (gpio == BTN_PIN_R)
-      estador = true;
-    else if (gpio == BTN_PIN_G)
-      estadog = true;
-  } else if (events & GPIO_IRQ_EDGE_RISE) { 
-    if (gpio == BTN_PIN_R)
-      estador = false;
-    else if (gpio == BTN_PIN_G)
-      estadog = false;
-  }
+    sleep_ms(50);  
+
+    if (gpio == BTN_PIN_R && (events & GPIO_IRQ_EDGE_FALL)) {  
+        if (!btn_r) {  
+            btn_r = true;
+            estador = !estador;  
+        }
+    } 
+    else if (gpio == BTN_PIN_R && (events & GPIO_IRQ_EDGE_RISE)) {  
+        btn_r = false;  
+    }
 }
-
-
 
 int main() {
-  stdio_init_all();
+    stdio_init_all();
 
-  gpio_init(LED_PIN_R);
-  gpio_set_dir(LED_PIN_R, GPIO_OUT);
+    gpio_init(LED_PIN_R);
+    gpio_set_dir(LED_PIN_R, GPIO_OUT);
+    gpio_put(LED_PIN_R, estador);
 
-  gpio_init(BTN_PIN_R);
-  gpio_set_dir(BTN_PIN_R, GPIO_IN);
-  gpio_pull_up(BTN_PIN_R);
+    gpio_init(BTN_PIN_R);
+    gpio_set_dir(BTN_PIN_R, GPIO_IN);
+    gpio_pull_up(BTN_PIN_R);
 
-  gpio_init(LED_PIN_G);
-  gpio_set_dir(LED_PIN_G, GPIO_OUT);
+    gpio_init(LED_PIN_G);
+    gpio_set_dir(LED_PIN_G, GPIO_OUT);
+    gpio_put(LED_PIN_G, 0);  
 
-  gpio_init(BTN_PIN_G);
-  gpio_set_dir(BTN_PIN_G, GPIO_IN);
-  gpio_pull_up(BTN_PIN_G);
+    gpio_init(BTN_PIN_G);
+    gpio_set_dir(BTN_PIN_G, GPIO_IN);
+    gpio_pull_up(BTN_PIN_G);
 
+ 
+    gpio_set_irq_enabled_with_callback(BTN_PIN_R, GPIO_IRQ_EDGE_FALL | GPIO_IRQ_EDGE_RISE, true, &btn_callback);
 
-  gpio_set_irq_enabled_with_callback(
-      BTN_PIN_R, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &btn_callback);
-  
-  gpio_set_irq_enabled_with_callback(
-      BTN_PIN_G, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &btn_callback);
+    while (true) {
 
+        gpio_put(LED_PIN_R, estador);
 
-  while (true) {
-    if (estadog){
-      gpio_put(LED_PIN_G, 1);
+        gpio_put(LED_PIN_G, gpio_get(BTN_PIN_G) == 0 ? 1 : 0);
+
+        sleep_ms(10); 
     }
-    if (estadog == false){
-    gpio_put(LED_PIN_G, 0);
-    }
-    if (estador){
-      gpio_put(LED_PIN_R, 1);
-    }
-    if (estador == false){
-      gpio_put(LED_PIN_R, 0);
-    }
-  }
 }
-
-
-
-
-
